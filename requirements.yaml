@@ -1,0 +1,15 @@
+name: selection_benchmark
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - slim
+  - tskit
+  - vcftools
+  - samtools
+  - shapeit4
+  - plink2
+  - admixture
+  - ohana
+  - selscan
+  - hapflk

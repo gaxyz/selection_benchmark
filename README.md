@@ -14,10 +14,11 @@ Code found here includes:
 
 We will use the following methods for selecting sweeps:
 
-- iHS standardized score
+- XP-EHH
 - Ohana
 - hapFLK
-- Relate Selection Test (RST)
+- PBS
+- PCAdapt
 
 
 
@@ -28,11 +29,14 @@ The Ohana score is computed using a maximum likelihood approach by comparing adm
 ### hapFLK
 
 
-### iHS
-
-### Relate Selection Test
+### XP-EHH
 
 Requires Phased Data
+
+### PBS
+
+### PCAdapt
+
 
 ## Bioinformatic Software Requirements
 
