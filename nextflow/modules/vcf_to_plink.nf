@@ -6,7 +6,7 @@ process VcfToPlink {
     input:
     path vcf
 
-    output:
+    output: 
     path("*.bed"), emit: bed
     path("*.bim"), emit: bim
     path("*.fam"), emit: fam
