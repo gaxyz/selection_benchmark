@@ -1,0 +1,88 @@
+initialize() {
+    initializeTreeSeq();
+    initializeMutationRate(0);
+    initializeRecombinationRate(1e-8);
+    initializeMutationType("m1", 0.5, "f", 0.0);
+    initializeMutationType("m2", 0.5, "f", 0.0);
+    m2.color = "red";
+    initializeGenomicElementType("g1", c(m1, m2), c(1.0, 0.0));
+    initializeGenomicElement(g1, 0, 1*999999);
+    
+    // Constants
+    defineConstant("s", 0.5);
+    defineConstant("m", 0.2);
+    defineConstant("condfreq", 0.3);
+    defineConstant("onsetFreq", 0.2);
+    defineConstant("epsilon", 0.01);
+    defineConstant("N", 1000);
+    defineConstant("m2_site", 1*499999);
+    defineConstant("simID", getSeed());
+}
+
+1 early() {
+    sim.addSubpop("p1", N);
+}
+
+1:9999 late() {
+    // Burn-in period
+}
+
+10000 late() {
+    sim.treeSeqOutput("burnin_" + simID + ".trees");
+    sample(p1.genomes, 1).addNewMutation(m2, 0.0, m2_site);
+}
+
+10000:10100 late() {
+    if (sim.countOfMutationsOfType(m2) == 0) {
+        cat(simID + " CYCLE: " + sim.cycle + ": m2 LOST -- RESTARTING\n");
+        sim.readFromPopulationFile("burnin_" + simID + ".trees");
+        sample(p1.genomes, 1).addNewMutation(m2, 0.0, m2_site);
+    } else if (sim.cycle == 10100) {
+        if (sim.mutationFrequencies(p1, sim.mutationsOfType(m2))[0] > condfreq) {
+            cat(simID + ": m2 ESTABLISHED -- PROCEEDING WITH SPLITS\n");
+        } else {
+            cat(simID + ": m2 NOT ESTABLISHED -- RESTARTING\n");
+            sim.readFromPopulationFile("burnin_" + simID + ".trees");
+            sample(p1.genomes, 1).addNewMutation(m2, 0.0, m2_site);
+            sim.cycle = 10000;
+        }
+    }
+}
+
+10100 late() {
+    sim.addSubpopSplit("p2", N, p1);
+    sim.addSubpopSplit("p3", N, p1);
+    sim.addSubpopSplit("p4", N, p1);
+}
+
+11000 late() {
+    sim.addSubpopSplit("p5", N, p2);
+}
+
+11001 late() {
+    m2muts = p5.genomes.mutationsOfType(m2);
+    if (size(m2muts) > 0) {
+        m2freq = sum(p5.genomes.countOfMutationsOfType(m2)) / (2 * p5.individualCount);
+        cat(simID + " CYCLE: " + sim.cycle + ": m2 frequency in p5 is " + m2freq + "\n");
+        
+        if (m2freq >= onsetFreq) {
+            cat(simID + ": m2 frequency in p5 is above threshold -- MODIFYING SELECTION IN p2\n");
+            p2.individuals.genomes.addFitnessEffect(m2, "m", 1.0 + s);
+        } else {
+            cat(simID + ": m2 frequency in p5 is below threshold -- RESTARTING\n");
+            sim.readFromPopulationFile("burnin_" + simID + ".trees");
+            sample(p1.genomes, 1).addNewMutation(m2, 0.0, m2_site);
+            sim.cycle = 10000;
+        }
+    } else {
+        cat(simID + ": m2 not present in p5 -- RESTARTING\n");
+        sim.readFromPopulationFile("burnin_" + simID + ".trees");
+        sample(p1.genomes, 1).addNewMutation(m2, 0.0, m2_site);
+        sim.cycle = 10000;
+    }
+}
+
+12000 late() {
+    sim.treeSeqOutput("final_" + simID + ".trees");
+    sim.simulationFinished();
+}
