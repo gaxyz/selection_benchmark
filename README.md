@@ -24,18 +24,27 @@ We will use the following methods for selecting sweeps:
 
 ### Ohana
 
+**Input format: plink**
+
 The Ohana score is computed using a maximum likelihood approach by comparing admixture-corrected SNP covariance matrices with an admixture-corrected genome-wide covariance matrix. It does not require data to be phased, but there is a need for checking that the admixture components are properly modelled (usually with the ADMIXTURE algorithm). Considering that the ADMIXTURE algorithm is pretty slow, we could use archetypal analysis or some other (faster) way of computing admixture components.
 
 ### hapFLK
 
+**Input format: VCF**
 
 ### XP-EHH
+
+**Input format: VCF**
 
 Requires Phased Data
 
 ### PBS
 
+**Input format: VCF**
+
 ### PCAdapt
+
+**Input format: plink**
 
 
 ## Bioinformatic Software Requirements
@@ -51,7 +60,6 @@ We will need the following software for simulating and processing population gen
 - ADMIXTURE (computing admixture components)
 - Ohana
 - selscan
-- Relate
 - hapFLK
 
 ## Other Requirements
