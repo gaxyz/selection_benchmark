@@ -10,6 +10,3 @@ dependencies:
   - shapeit4
   - plink2
   - admixture
-  - ohana
-  - selscan
-  - hapflk
